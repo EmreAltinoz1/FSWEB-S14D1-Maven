@@ -1,29 +1,26 @@
 import com.workintech.cylinder.Circle;
 import com.workintech.cylinder.Cylinder;
-import com.workintech.developers.*;
-import com.workintech.pool.Cuboid;
 import com.workintech.pool.Rectangle;
+import com.workintech.pool.Cuboid;
+import com.workintech.developers.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Field;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 @ExtendWith(ResultAnalyzer.class)
 public class MainTest {
-
     private Circle circle;
     private Cylinder cylinder;
     private Rectangle rectangle;
     private Cuboid cuboid;
     private Employee employee;
-
     private HRManager hrManager;
     private JuniorDeveloper juniorDeveloper;
     private MidDeveloper midDeveloper;
@@ -31,10 +28,10 @@ public class MainTest {
 
     @BeforeEach
     void setUp() {
-        circle = new Circle(2);
-        cylinder = new Cylinder(2,2);
-        rectangle = new Rectangle(1,2);
-        cuboid = new Cuboid(1, 2, 3);
+        circle = new Circle(3.75);
+        cylinder = new Cylinder(5.55, 7.25);
+        rectangle = new Rectangle(5, 10);
+        cuboid = new Cuboid(5, 10, 5);
         employee = new Employee(1, "Jane Doe", 20000);
         hrManager = new HRManager(1, "John Doe", 120000);
         juniorDeveloper = new JuniorDeveloper(1, "Junior Doe", 45000);
@@ -58,17 +55,18 @@ public class MainTest {
     @DisplayName("getArea methodu Circle sınıfında doğru çalışıyor mu?")
     @Test
     public void testGetArea() throws NoSuchFieldException {
-        assertTrue(String.format("%.2f", circle.getArea()).contains("12"));
+        assertEquals(3.75, circle.getRadius(), 0.0001);
+        assertEquals(44.178646691106465, circle.getArea(), 0.0001);
     }
 
-    @DisplayName("Circle sınıf değişkenleri doğru access modifier a sahip mi ?")
+    @DisplayName("Cylinder sınıf değişkenleri doğru access modifier a sahip mi ?")
     @Test
     public void testCylinderAccessModifiers() throws NoSuchFieldException {
         Field heightField = cylinder.getClass().getDeclaredField("height");
         assertEquals(heightField.getModifiers(), 2);
     }
 
-    @DisplayName("Cylinder sınıfı ve değişkenleri doğru type a sahip mi ?")
+    @DisplayName("Cylinder sınıf değişkenleri doğru type a sahip mi ?")
     @Test
     public void testCylinderTypes() throws NoSuchFieldException {
         assertThat(cylinder, instanceOf(Circle.class));
@@ -78,7 +76,10 @@ public class MainTest {
     @DisplayName("getVolume methodu doğru çalışıyor mu?")
     @Test
     public void testGetVolume() throws NoSuchFieldException {
-        assertTrue(String.format("%.2f", cylinder.getVolume()).contains("25"));
+        assertEquals(5.55, cylinder.getRadius(), 0.0001);
+        assertEquals(7.25, cylinder.getHeight(), 0.0001);
+        assertEquals(96.76890771219959, cylinder.getArea(), 0.0001);
+        assertEquals(701.574580913447, cylinder.getVolume(), 0.0001);
     }
 
     @DisplayName("Rectangle sınıf değişkenleri doğru access modifier a sahip mi ?")
@@ -97,17 +98,19 @@ public class MainTest {
         assertThat(rectangle.getLength(), instanceOf(Number.class));
     }
 
-    @DisplayName("getArea methodu Rectangle sınıfında doğru çalışıyor mu?")
+    @DisplayName("Rectangle metodları doğru çalışıyor mu?")
     @Test
-    public void testGetAreaRectangle() throws NoSuchFieldException {
-        assertEquals(String.format("%.2f", rectangle.getArea()), "2.00");
+    public void testRectangleMethods() throws NoSuchFieldException {
+        assertEquals(5.0, rectangle.getWidth(), 0.0001);
+        assertEquals(10.0, rectangle.getLength(), 0.0001);
+        assertEquals(50.0, rectangle.getArea(), 0.0001);
     }
 
     @DisplayName("Cuboid sınıf değişkenleri doğru access modifier a sahip mi ?")
     @Test
     public void testCuboidAccessModifiers() throws NoSuchFieldException {
-        Field widthField = cuboid.getClass().getDeclaredField("height");
-        assertEquals(widthField.getModifiers(), 2);
+        Field heightField = cuboid.getClass().getDeclaredField("height");
+        assertEquals(heightField.getModifiers(), 2);
     }
 
     @DisplayName("Cuboid sınıf değişkenleri doğru type a sahip mi ?")
@@ -117,10 +120,14 @@ public class MainTest {
         assertThat(cuboid.getHeight(), instanceOf(Number.class));
     }
 
-    @DisplayName("getVolume methodu Cuboid sınıfında doğru çalışıyor mu?")
+    @DisplayName("Cuboid metodları doğru çalışıyor mu?")
     @Test
-    public void testGetVolumeRectangle() throws NoSuchFieldException {
-        assertEquals(String.format("%.2f", cuboid.getVolume()), "6.00");
+    public void testCuboidMethods() throws NoSuchFieldException {
+        assertEquals(5.0, cuboid.getWidth(), 0.0001);
+        assertEquals(10.0, cuboid.getLength(), 0.0001);
+        assertEquals(50.0, cuboid.getArea(), 0.0001);
+        assertEquals(5.0, cuboid.getHeight(), 0.0001);
+        assertEquals(250.0, cuboid.getVolume(), 0.0001);
     }
 
     @DisplayName("Employee sınıf değişkenleri doğru access modifier a sahip mi ?")
@@ -151,6 +158,29 @@ public class MainTest {
         assertThat(seniorDeveloper, instanceOf(Employee.class));
     }
 
+    @DisplayName("HRManager addEmployee metodları doğru çalışıyor mu?")
+    @Test
+    public void testHRManagerAddEmployee() {
+        // Test adding developers
+        hrManager.addEmployee(juniorDeveloper);
+        hrManager.addEmployee(midDeveloper);
+        hrManager.addEmployee(seniorDeveloper);
 
+        // Test work method updates salary
+        double initialSalary = juniorDeveloper.getSalary();
+        juniorDeveloper.work();
+        assertTrue(juniorDeveloper.getSalary() > initialSalary);
 
+        initialSalary = midDeveloper.getSalary();
+        midDeveloper.work();
+        assertTrue(midDeveloper.getSalary() > initialSalary);
+
+        initialSalary = seniorDeveloper.getSalary();
+        seniorDeveloper.work();
+        assertTrue(seniorDeveloper.getSalary() > initialSalary);
+
+        initialSalary = hrManager.getSalary();
+        hrManager.work();
+        assertTrue(hrManager.getSalary() > initialSalary);
+    }
 }
